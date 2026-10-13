@@ -31,6 +31,27 @@ def bmi_guidance(bmi):
     }
 
 
+def bmi_snapshot(height_cm, bmi):
+    height_m = height_cm / 100
+    ideal_min = 18.5 * height_m * height_m
+    ideal_max = 24 * height_m * height_m
+
+    if bmi < 18.5:
+        status = "偏輕提醒"
+    elif bmi < 24:
+        status = "穩定中"
+    elif bmi < 27:
+        status = "調整中"
+    else:
+        status = "值得關注"
+
+    return {
+        "ideal_weight": f"{ideal_min:.1f} – {ideal_max:.1f} kg",
+        "status": status,
+        "summary": "理想體重範圍會隨身高而變化，這組數字是你更貼近健康範圍的參考區間。",
+    }
+
+
 def parse_positive_number(value):
     try:
         number = float(value)
@@ -68,7 +89,14 @@ def index():
                     errors["weight"] = "無法使用這組數值計算 BMI，請檢查身高與體重。"
                 else:
                     displayed_bmi = round(bmi, 1)
-                    result = {"bmi": f"{displayed_bmi:.1f}", **bmi_guidance(displayed_bmi)}
+                    guidance = bmi_guidance(displayed_bmi)
+                    progress = min(max(int((displayed_bmi / 35) * 100), 8), 100)
+                    result = {
+                        "bmi": f"{displayed_bmi:.1f}",
+                        **guidance,
+                        **bmi_snapshot(height, displayed_bmi),
+                        "progress": progress,
+                    }
 
     return render_template(
         "index.html",

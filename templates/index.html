@@ -69,6 +69,26 @@
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
                 <h2 id="result-title">給你的健康建議</h2>
                 <p>{{ result.advice }}</p>
+                <div class="result-meta" aria-label="健康快照">
+                  <div>
+                    <span>理想體重</span>
+                    <strong>{{ result.ideal_weight }}</strong>
+                  </div>
+                  <div>
+                    <span>健康狀態</span>
+                    <strong>{{ result.status }}</strong>
+                  </div>
+                </div>
+                <div class="result-progress" aria-label="BMI 健康進度">
+                  <div class="progress-meta">
+                    <span>健康進度</span>
+                    <strong>{{ result.progress }}%</strong>
+                  </div>
+                  <div class="progress-track">
+                    <span class="progress-fill {{ result.tone }}" style="width: {{ result.progress }}%"></span>
+                  </div>
+                </div>
+                <p class="result-summary">{{ result.summary }}</p>
                 <span class="result-decoration" aria-hidden="true">✳</span>
               </section>
             {% else %}
