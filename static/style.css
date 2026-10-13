@@ -57,6 +57,11 @@ button span { font-size: 20px; font-weight: 400; }
 .result-panel.low { background: #e9eef1; }
 .result-panel.high { background: #f5eddf; }
 .panel-kicker { position: relative; z-index: 1; color: #5f816d; }
+.result-badge { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 7px 12px; border: 1px solid rgba(61, 94, 80, 0.15); border-radius: 40px; background: rgba(255,255,255,0.3); color: #274c3b; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.result-badge .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+.result-badge.low { color: #4d7a95; }
+.result-badge.healthy { color: #3e8d5d; }
+.result-badge.high { color: #c85a3d; }
 .result-main { position: relative; z-index: 1; display: flex; align-items: baseline; gap: 12px; margin-top: 35px; }
 .result-number { font-size: clamp(70px, 8vw, 110px); font-weight: 700; line-height: 1.1; letter-spacing: -.085em; }
 .result-unit { color: #728a77; font-size: 13px; font-weight: 700; letter-spacing: .1em; }
