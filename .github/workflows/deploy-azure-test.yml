@@ -75,7 +75,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Azure Web App lookup failed' }
           if ($platform.Trim().ToLowerInvariant() -ne 'false') { throw 'Target must be a Windows Azure Web App' }
 
-          az webapp deployment slot show --resource-group $env:AZURE_RESOURCE_GROUP --name $env:AZURE_WEBAPP_NAME --slot $env:AZURE_SLOT_NAME --output none
+          az webapp show --resource-group $env:AZURE_RESOURCE_GROUP --name $env:AZURE_WEBAPP_NAME --slot $env:AZURE_SLOT_NAME --output none
           if ($LASTEXITCODE -ne 0) { throw "Azure Web App slot '$env:AZURE_SLOT_NAME' lookup failed" }
 
       - name: Deploy to Azure Web App test slot
