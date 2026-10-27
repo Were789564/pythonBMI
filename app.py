@@ -52,6 +52,14 @@ def bmi_snapshot(height_cm, bmi):
     }
 
 
+def military_service_guidance(bmi):
+    if bmi < 15 or bmi >= 35:
+        return "免役體位"
+    if bmi < 16.5 or bmi >= 31:
+        return "替代役體位"
+    return "常備役體位"
+
+
 def parse_positive_number(value):
     try:
         number = float(value)
@@ -65,6 +73,7 @@ def index():
     name_input = ""
     height_input = ""
     weight_input = ""
+    target_bmi_input = ""
     errors = {}
     result = None
 
@@ -72,13 +81,17 @@ def index():
         name_input = request.form.get("name", "").strip()
         height_input = request.form.get("height", "").strip()
         weight_input = request.form.get("weight", "").strip()
+        target_bmi_input = request.form.get("target_bmi", "").strip()
         height = parse_positive_number(height_input)
         weight = parse_positive_number(weight_input)
+        target_bmi = parse_positive_number(target_bmi_input) if target_bmi_input else None
 
         if height is None:
             errors["height"] = "請輸入大於 0 的有效身高（公分）。"
         if weight is None:
             errors["weight"] = "請輸入大於 0 的有效體重（公斤）。"
+        if target_bmi_input and target_bmi is None:
+            errors["target_bmi"] = "請輸入大於 0 的有效目標 BMI。"
 
         if not errors:
             height_meters = height / 100
@@ -96,16 +109,28 @@ def index():
                     result = {
                         "name": name_input,
                         "bmi": f"{displayed_bmi:.1f}",
+                        "military_service": military_service_guidance(displayed_bmi),
                         **guidance,
                         **bmi_snapshot(height, displayed_bmi),
                         "progress": progress,
                     }
+                    if target_bmi is not None:
+                        target_weight = target_bmi * height_squared
+                        weight_change = target_weight - weight
+                        result["target_bmi"] = f"{target_bmi:.1f}"
+                        result["weight_change"] = f"{abs(weight_change):.1f}"
+                        result["weight_change_label"] = (
+                            "需要增重" if weight_change > 0.05
+                            else "需要減重" if weight_change < -0.05
+                            else "目前體重符合目標"
+                        )
 
     return render_template(
         "index.html",
         name_input=name_input,
         height_input=height_input,
         weight_input=weight_input,
+        target_bmi_input=target_bmi_input,
         errors=errors,
         result=result,
     )

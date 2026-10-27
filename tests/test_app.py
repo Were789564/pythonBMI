@@ -1,6 +1,6 @@
 import unittest
 
-from app import app, bmi_guidance
+from app import app, bmi_guidance, military_service_guidance
 
 
 class BmiAppTests(unittest.TestCase):
@@ -21,6 +21,7 @@ class BmiAppTests(unittest.TestCase):
         self.assertIn("王小明 的 BMI 結果", page)
         self.assertIn("22.5", page)
         self.assertIn("健康體位", page)
+        self.assertIn("常備役體位", page)
         self.assertIn("維持均衡飲食", page)
 
     def test_taiwan_adult_thresholds(self):
@@ -34,6 +35,20 @@ class BmiAppTests(unittest.TestCase):
         ]:
             with self.subTest(bmi=bmi):
                 self.assertEqual(bmi_guidance(bmi)["label"], category)
+
+    def test_military_service_thresholds(self):
+        for bmi, category in [
+            (14.9, "免役體位"),
+            (15.0, "替代役體位"),
+            (16.4, "替代役體位"),
+            (16.5, "常備役體位"),
+            (30.9, "常備役體位"),
+            (31.0, "替代役體位"),
+            (34.9, "替代役體位"),
+            (35.0, "免役體位"),
+        ]:
+            with self.subTest(bmi=bmi):
+                self.assertEqual(military_service_guidance(bmi), category)
 
     def test_invalid_fields_do_not_produce_result(self):
         for height, weight in [("", "65"), ("0", "65"), ("abc", "65"), ("170", "-2"), ("inf", "65"), ("170", "nan"), ("1e-300", "65"), ("1e308", "65"), ("1", "1e308")]:
@@ -56,6 +71,18 @@ class BmiAppTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertNotIn("<script>", page)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt; 的 BMI 結果", page)
+
+    def test_target_bmi_shows_weight_change(self):
+        response = self.client.post("/", data={"height": "170", "weight": "65", "target_bmi": "20"})
+        page = response.get_data(as_text=True)
+        self.assertIn("目標 BMI 20.0", page)
+        self.assertIn("需要減重 7.2 kg", page)
+
+    def test_target_bmi_is_optional_and_validated(self):
+        response = self.client.post("/", data={"height": "170", "weight": "65", "target_bmi": "abc"})
+        page = response.get_data(as_text=True)
+        self.assertIn("請輸入大於 0 的有效目標 BMI", page)
+        self.assertNotIn("YOUR RESULT", page)
 
     def test_input_is_escaped(self):
         response = self.client.post("/", data={"height": '<script>alert(1)</script>', "weight": "65"})

@@ -55,6 +55,14 @@
                     </div>
                     {% if errors.weight %}<p class="field-error" id="weight-error">{{ errors.weight }}</p>{% endif %}
                   </div>
+                  <div class="field target-field">
+                    <label for="target_bmi">目標 BMI <span>OPTIONAL</span></label>
+                    <div class="input-wrap">
+                      <input id="target_bmi" name="target_bmi" type="number" inputmode="decimal" min="0.01" step="any" placeholder="例如 22" value="{{ target_bmi_input }}" {% if errors.target_bmi %}aria-invalid="true" aria-describedby="target-bmi-error"{% endif %}>
+                      <span class="unit">BMI</span>
+                    </div>
+                    {% if errors.target_bmi %}<p class="field-error" id="target-bmi-error">{{ errors.target_bmi }}</p>{% endif %}
+                  </div>
                 </div>
                 <button type="submit">計算 BMI <span aria-hidden="true">↗</span></button>
               </form>
@@ -76,6 +84,18 @@
                 </div>
                 <div class="result-divider"></div>
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
+                <div class="result-meta">
+                  <div>
+                    <span>兵役體位參考</span>
+                    <strong>{{ result.military_service }}</strong>
+                  </div>
+                  {% if result.weight_change_label %}
+                  <div>
+                    <span>目標 BMI {{ result.target_bmi }}</span>
+                    <strong>{{ result.weight_change_label }}{% if result.weight_change != "0.0" %} {{ result.weight_change }} kg{% endif %}</strong>
+                  </div>
+                  {% endif %}
+                </div>
                 <h2 id="result-title">給你的健康建議</h2>
                 <p>{{ result.advice }}</p>
                 <div class="result-meta" aria-label="健康快照">
@@ -125,7 +145,7 @@
             <div class="range-row"><span><i class="range-dot obese-dot"></i>肥胖</span><strong>27 以上</strong></div>
           </div>
         </section>
-        <p class="disclaimer">此結果僅供成人參考，無法反映肌肉量等個別差異，亦不適用於兒童、青少年或孕婦；若有健康疑慮，請諮詢醫療專業人員。</p>
+        <p class="disclaimer">此結果僅供成人參考，兵役體位仍以正式徵兵檢查判定為準；BMI 無法反映肌肉量等個別差異，亦不適用於兒童、青少年或孕婦。</p>
       </main>
       <footer>© 好好生活 <span>TAKE CARE, EVERY DAY.</span></footer>
     </div>
