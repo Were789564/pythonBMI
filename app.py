@@ -1,8 +1,13 @@
 import math
+import os
+import secrets
 
 from flask import Flask, render_template, request
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
+csrf = CSRFProtect(app)
 
 
 def bmi_guidance(bmi):
@@ -137,4 +142,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")

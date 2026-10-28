@@ -34,6 +34,7 @@
               </div>
 
               <form method="post" action="{{ url_for('index') }}" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-fields">
                   <div class="field name-field">
                     <label for="name">姓名 <span>NAME</span></label>

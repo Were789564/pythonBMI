@@ -5,6 +5,7 @@ from app import app, bmi_guidance, military_service_guidance
 
 class BmiAppTests(unittest.TestCase):
     def setUp(self):
+        app.config["WTF_CSRF_ENABLED"] = False
         self.client = app.test_client()
 
     def test_initial_page(self):
@@ -89,6 +90,14 @@ class BmiAppTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertNotIn("<script>", page)
         self.assertIn("請輸入大於 0", page)
+
+    def test_post_requires_csrf_token(self):
+        app.config["WTF_CSRF_ENABLED"] = True
+        try:
+            response = self.client.post("/", data={"height": "170", "weight": "65"})
+            self.assertEqual(response.status_code, 400)
+        finally:
+            app.config["WTF_CSRF_ENABLED"] = False
 
 
 if __name__ == "__main__":
